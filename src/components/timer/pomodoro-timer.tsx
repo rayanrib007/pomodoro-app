@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import React, { useEffect, useState } from "react";
 
 import { useInterval } from "../../hooks/use-interval";
 import { Button, Timer } from "../generals/CUiLib";
 import { IPomodoroTimerProtocol } from "../../interfaces/ITimer";
+
+const bellStart = require("../../sounds/src_sounds_bell-start.mp3");
+const bellFinish = require("../../sounds/src_sounds_bell-finish.mp3");
+
+const audioStartWorking = new Audio(bellStart);
+const audioFinishworking = new Audio(bellFinish);
 
 export function PomodoroTimer(props: IPomodoroTimerProtocol) {
   const [mainatime, setMainTime] = useState(props.pomodoroTime);
@@ -27,13 +34,14 @@ export function PomodoroTimer(props: IPomodoroTimerProtocol) {
     SetWotking(true);
     SetResting(false);
     setMainTime(props.pomodoroTime);
+    audioStartWorking.play();
   };
 
   const configuredRest = (long: boolean) => {
     setTimeCouting(true);
     SetWotking(false);
     SetResting(true);
-
+    audioFinishworking.play();
     if (long) setMainTime(props.longRestTime);
     else setMainTime(props.shortRestTime);
   };
