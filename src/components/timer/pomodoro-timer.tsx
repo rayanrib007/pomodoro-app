@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useInterval } from "../../hooks/use-interval";
 import { Button, Timer } from "../generals/CUiLib";
@@ -27,32 +27,42 @@ export function PomodoroTimer(props: IPomodoroTimerProtocol) {
   useInterval(
     () => {
       setMainTime(mainTime - 1);
+      if (working) setFullWorkingTime(fullWorkingTime + 1);
     },
     timeCouting ? 1000 : null,
   );
 
-  const configuredWork = () => {
+  const configuredWork = useCallback(() => {
     setTimeCouting(true);
     SetWotking(true);
     SetResting(false);
     setMainTime(props.pomodoroTime);
     audioStartWorking.play();
-  };
+  }, [setTimeCouting, SetWotking, SetResting, setMainTime, props.pomodoroTime]);
 
-  const configuredRest = (long: boolean) => {
-    setTimeCouting(true);
-    SetWotking(false);
-    SetResting(true);
-    audioFinishworking.play();
-    if (long) setMainTime(props.longRestTime);
-    else setMainTime(props.shortRestTime);
-  };
+  const configuredRest = useCallback(
+    (long: boolean) => {
+      setTimeCouting(true);
+      SetWotking(false);
+      SetResting(true);
+      audioFinishworking.play();
+      if (long) setMainTime(props.longRestTime);
+      else setMainTime(props.shortRestTime);
+    },
+    [
+      SetWotking,
+      SetResting,
+      setTimeCouting,
+      setMainTime,
+      props.longRestTime,
+      props.shortRestTime,
+    ],
+  );
   useEffect(() => {
     if (working) document.body.classList.add("working");
     if (resting) document.body.classList.remove("working");
-    console.log(mainTime);
 
-    if (mainTime >= 0) return;
+    if (mainTime > 0) return;
 
     if (working && cyclesQtdManager.length > 0) {
       configuredRest(false);
@@ -62,14 +72,8 @@ export function PomodoroTimer(props: IPomodoroTimerProtocol) {
       setCompletedCycles(completdCycles + 1);
       setCyclesQtdManager(new Array(props.cycles - 1).fill(true));
     }
-    if (working) {
-      console.log("v");
-      setNumberOfPomodoro(numberOfPomodoro + 1);
-    }
-    if (resting) {
-      console.log("t");
-      configuredWork();
-    }
+    if (working) setNumberOfPomodoro(numberOfPomodoro + 1);
+    if (resting) configuredWork();
   }, [
     working,
     resting,
@@ -85,7 +89,7 @@ export function PomodoroTimer(props: IPomodoroTimerProtocol) {
 
   return (
     <div className="pomodoro">
-      <h2>You are: working</h2>
+      <h2>Você está {working ? "trabalhando" : "descansando"}</h2>
       <Timer mainTime={mainTime} />
       <div className="controls">
         <Button text="Work" onclick={() => configuredWork()} />
