@@ -1,6 +1,6 @@
 import React from "react";
 import { ButtonGenericProtocol } from "../../interfaces/IUi";
-import { secondsToTime } from "../../utils/second-to-time.";
+import { secondsToTime } from "../../utils/second-to-time";
 
 export function Button(props: ButtonGenericProtocol) {
   return (

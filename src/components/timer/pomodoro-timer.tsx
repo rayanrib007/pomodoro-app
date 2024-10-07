@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useInterval } from "../../hooks/use-interval";
 import { Button, Timer } from "../generals/CUiLib";
 import { IPomodoroTimerProtocol } from "../../interfaces/ITimer";
-import { secondsToTime } from "../../utils/second-to-time.";
+import { secondsToTime } from "../../utils/second-to-time";
 
 const bellStart = require("../../sounds/src_sounds_bell-start.mp3");
 const bellFinish = require("../../sounds/src_sounds_bell-finish.mp3");
